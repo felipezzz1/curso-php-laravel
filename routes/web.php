@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use Illuminate\Support\Facades\DB;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,8 +20,6 @@ use Illuminate\Support\Facades\File;
 */
 
 Route::get('/', function () {
-    $posts = Post::all();
-
     // collect(File::files(resource_path("posts")))
     // ->map(fn($file) => YamlFrontMatter::parseFile($file))
     // ->map(fn($document) => new Post(
@@ -29,18 +30,23 @@ Route::get('/', function () {
     //         $document->slug
     // ));
 
+    \Illuminate\Support\Facades\DB::listen(function($query){
+        logger($query->sql, $query->bindings);
+    });
+
     return view('posts',[
-        'posts' => Post::all()
+        'posts' => Post::with('category')->get()
     ]);
 });
 
-Route::get('posts/{post}', function($slug){
-    $post = Post::findOrFail($slug);
-
+Route::get('posts/{post:slug}', function(Post $post){ //Post::where('slug', $post)->firstOrFail()
     return view('post',[
-        'post' => Post::findOrFail($slug)
+        'post' => $post
     ]);
+});
 
-    return $post;
-
+Route::get('categories/{category:slug}', function (Category $category){
+    return view('posts', [
+        'posts' => $category->posts
+    ]);
 });
