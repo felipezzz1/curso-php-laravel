@@ -3,6 +3,7 @@
 use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use Illuminate\Support\Facades\File;
@@ -20,24 +21,11 @@ use Illuminate\Support\Facades\Log;
 */
 
 Route::get('/', function () {
-    // collect(File::files(resource_path("posts")))
-    // ->map(fn($file) => YamlFrontMatter::parseFile($file))
-    // ->map(fn($document) => new Post(
-    //         $document->title,
-    //         $document->excerpt,
-    //         $document->date,
-    //         $document->body(),
-    //         $document->slug
-    // ));
-
-    \Illuminate\Support\Facades\DB::listen(function($query){
-        logger($query->sql, $query->bindings);
-    });
-
     return view('posts',[
-        'posts' => Post::with('category')->get()
+        'posts' => Post::latest()->get(),
+        'categories' => Category::all()
     ]);
-});
+})->name('home');
 
 Route::get('posts/{post:slug}', function(Post $post){ //Post::where('slug', $post)->firstOrFail()
     return view('post',[
@@ -47,6 +35,14 @@ Route::get('posts/{post:slug}', function(Post $post){ //Post::where('slug', $pos
 
 Route::get('categories/{category:slug}', function (Category $category){
     return view('posts', [
-        'posts' => $category->posts
+        'posts' => $category->posts,
+        'currentCategory' => $category,
+        'categories' => Category::all()
+    ]);
+}) ->name('category');
+
+Route::get('authors/{author:username}', function (User $author){
+    return view('posts', [
+        'posts' => $author->posts
     ]);
 });

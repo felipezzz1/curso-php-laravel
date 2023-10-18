@@ -9,7 +9,9 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
+
+    protected $with = ['category', 'author'];
 
     // protected $fillable = ['title', 'excerpt', 'body', 'id'];
 
@@ -18,8 +20,8 @@ class Post extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function author(){ //author_id user_id etc
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }
