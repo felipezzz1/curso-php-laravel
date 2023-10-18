@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Lexer\TokenEmulator\FnTokenEmulator;
 
 class Post extends Model
 {
@@ -12,6 +13,14 @@ class Post extends Model
     protected $guarded = [];
 
     protected $with = ['category', 'author'];
+
+    public function scopeFilter($query, array $filters) //Post::newQuery()->filter()
+    {
+        $query->when($filters['search'] ?? false, fn($query, $search)=>
+            $query
+                ->where('title', 'like', '%' . $search . '%')
+                ->orwhere('body', 'like', '%' . $search . '%'));
+    }
 
     // protected $fillable = ['title', 'excerpt', 'body', 'id'];
 
