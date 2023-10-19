@@ -52,7 +52,7 @@
                             </label>
 
                             <input id="email" type="text" placeholder="Your email address"
-                                   class="lg:bg-transparent py-2 lg:py-0 pl-4 focus-within:outline-none">
+                                class="lg:bg-transparent py-2 lg:py-0 pl-4 focus-within:outline-none">
                         </div>
 
                         <button type="submit"
@@ -65,4 +65,7 @@
             </div>
         </footer>
     </section>
+
+    <x-flash/>
+
 </body>
