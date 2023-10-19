@@ -40,6 +40,10 @@ class Post extends Model
 
     // protected $fillable = ['title', 'excerpt', 'body', 'id'];
 
+    public function comments(){ //author_id user_id etc
+        return $this->hasMany(Comment::class);
+    }
+
     public function category(){
         //hasOne, hasMany, belongsTo, belongsToMany
         return $this->belongsTo(Category::class);
